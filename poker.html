@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Poker Game</title>
+</head>
+
+<style>
+.hide{
+	display: none;
+}
+</style>
+<script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
+<script type="text/javascript">
+//var winnerNo = -1;
+	$( function() {
+		$("#playerNumButton").click( function() {
+			playerNum = $("#numOfPlayer").val();
+			$("#confirmationMsg").html("Game starts with " + playerNum + " players.<br/>"); 
+			// use ajax calls to communicate between php. Send number of players and whether it
+			// is new game to poker.php and receive players' card in visual representation
+			// and the winner.
+			$.ajax({ 
+				url : "poker.php",
+				data: {num: playerNum, isNewGame:true},
+				type: "post",
+				success : function (data) {
+					var ret = JSON.parse(data);
+					$("#cards").html(ret['playerCardInfo']);
+					winnerNo = ret['winner']; //winnerNo is global. Not an index (1-4)
+				}
+			});	
+			$("#winnerButton").show();
+		});
+		$("#winnerButton").click( function() {
+			$("#winner").html("Player"+winnerNo+" wins. Congratulations!");
+			$("#winner").show();
+			$("#continue").show();
+		});
+		$("#continueButton").click( function() {
+			if($('input[name=conti]:checked').val() === "yes"){
+				$("#confirmationMsg").html("Game continues with " + playerNum + " players.<br/>");
+				$("#continue").hide();
+				$("#winner").hide();
+				
+				$.ajax({
+					url : "poker.php",
+					data: {num: playerNum, isNewGame:false},
+					type: "post",
+					success : function (data) {
+						var ret = JSON.parse(data);
+						$("#cards").html(ret['playerCardInfo']);
+						winnerNo = ret['winner']; //winnerNo is global. Not an index (1-4), a number.
+					}
+				});	
+			} else if($('input[name=conti]:checked').val() === "no"){
+				$("article").hide();
+				$('h1').text("Thanks for playing!");
+			}
+		});
+	});	
+</script>
+
+<body>
+<header>
+	<h1>Welcome to my poker game!</h1> 
+</header>
+
+<article>
+<!-- get number of players -->
+<form>
+  <select name="numOfPlayer" id = "numOfPlayer">
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+  </select>
+  <br/>
+  <input type="button" id = "playerNumButton" value = "Confirm"/>
+</form>
+
+<h3 id = "confirmationMsg"></h3>
+<p id = "cards">
+</p>
+
+<form>
+	<input type="button" id = "winnerButton" class = "hide" value = "Check Winner"/>
+</form>
+<p id = "winner"></p>
+
+<form id = "continue" class = "hide">
+Do you want to continue playing the game?<br/>
+	<label for = "yes">Yes</label><input type="radio" id = "yes" name="conti" value="yes"/>
+	<label for = "no">No</label><input type="radio" id = "no" name="conti" value="no"/>
+	<br/>
+	<input type = "button" value = "Submit" id = "continueButton"/>
+</form>
+
+<p>
+	<a href = "poker.html">Restart</a>
+</p>
+</article>
+
+</body>
+</html>
