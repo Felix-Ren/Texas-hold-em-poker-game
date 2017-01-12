@@ -5,7 +5,7 @@ A simplified Texas hold 'em game implemented with HTML and PHP
 This is not exactly a hold 'em game because players cannot choose to hold or fold their cards. Instead, each player is dealt with 5 cards at once and the system will compare all players' cards and declare the winner.
 
 ## How to play?
-Simply download all files to the same directory and start by opening poker.html.
+Simply download **completeDeckOfCards.txt**, **deckOfCards.txt**, **poker.html**, **poker.php** to the same directory and start by opening poker.html.
 
 
 ## Rules used?
